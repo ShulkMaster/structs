@@ -6,13 +6,13 @@
 namespace Data {
 
     template<typename T>
-    class Graph : public IMutable<GraphNode<T>>, public IEnumerable<GraphNode<T>> {
+    class Graph : public IMutable<GraphNode<T> *>, public IEnumerable<GraphNode<T> *> {
     private:
         const int maxNodes = 25;
-        Data::SingleList<GraphNode<T>*> *list = nullptr;
+        Data::SingleList<GraphNode<T> *> *list = nullptr;
     public:
         Graph() {
-            list = new Data::SingleList<GraphNode<T>>();
+            list = new Data::SingleList<GraphNode<T> *>();
         }
 
         bool Insert(GraphNode<T> *node) override {
@@ -24,10 +24,6 @@ namespace Data {
         }
 
         bool Delete(GraphNode<T> *value) override {
-            return false;
-        }
-
-        bool Delete(int position) override {
             return false;
         }
 
