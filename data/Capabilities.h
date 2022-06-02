@@ -4,7 +4,7 @@
 template<typename T>
 class IEnumerable {
 public:
-    virtual T *GetCurrent() = 0;
+    virtual T GetCurrent() = 0;
 
     virtual bool Next() = 0;
 
@@ -12,17 +12,15 @@ public:
 
     virtual int Count() = 0;
 
-    virtual void ForEach(void (*func)(T*)) = 0;
+    virtual void ForEach(void (*func)(T)) = 0;
 };
 
 template<typename T>
 class IMutable {
 public:
-    virtual bool Insert(T *node) = 0;
+    virtual bool Insert(T node) = 0;
 
-    virtual bool Delete(T *value) = 0;
-
-    virtual bool Delete(int position) = 0;
+    virtual bool Delete(T value) = 0;
 
     virtual bool Replace(int position) = 0;
 };

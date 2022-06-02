@@ -7,15 +7,15 @@
 namespace Data {
 
     template<typename T>
-    class SingleList : public IMutable<SingleNode<T>>, public IEnumerable<SingleNode<T>> {
+    class SingleList : public IMutable<T>, public IEnumerable<T> {
     private:
         SingleNode<T> *root = nullptr;
         int count = 0;
 
     public:
-        bool Insert(SingleNode<T> *node) override {
+        bool Insert(T node) override {
             if (root == nullptr) {
-                root = node;
+                root = new SingleNode<T>(node);
                 count++;
                 return true;
             }
@@ -24,24 +24,20 @@ namespace Data {
             while (temp->next != nullptr){
                 temp = temp->next;
             }
-            temp->next = node;
+            temp->next = new SingleNode<T>(node);
             count++;
             return true;
         }
 
-        bool Delete(SingleNode<T> *node) override {
-            return false;
-        }
-
-        bool Delete(int position) override {
+        bool Delete(T node) override {
             return false;
         }
 
 
-        void ForEach(void (*func)(SingleNode<T>*)) override {
+        void ForEach(void (*func)(T node)) override {
             auto temp = root;
             for (; temp != nullptr; temp = temp->next) {
-                func(temp);
+                func(temp->value);
             }
         }
 
@@ -49,8 +45,8 @@ namespace Data {
             return false;
         }
 
-        SingleNode<T> *GetCurrent() override {
-            return root;
+        T GetCurrent() override {
+            return root->value;
         }
 
         bool Next() override {

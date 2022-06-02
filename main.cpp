@@ -1,13 +1,13 @@
 #include <iostream>
-#include "SingleList.h"
+#include "Graph.h"
 
 int main() {
-    Data::SingleList<int> list;
+    Data::SingleList<int> graph;
     for (int i = 0; i < 20; ++i) {
-        list.Insert(new Data::SingleNode<int>(i));
+        graph.Insert(i);
     }
-    list.ForEach([](auto x) -> void {
-        std::cout << x->value << "\n";
+    graph.ForEach([](auto x) -> void {
+        std::cout << x << "\n";
     });
     std::cout << std::endl;
     return 0;
