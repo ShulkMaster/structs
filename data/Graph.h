@@ -29,10 +29,14 @@ namespace Data {
                 if (node->value % gNode->value == 0) {
                     node->connections = new SingleNode<GraphNode<T> *>(gNode);
                     auto conns = gNode->connections;
-                    while (conns != nullptr) {
+                    if (conns == nullptr) {
+                        gNode->connections = new SingleNode<GraphNode<T> *>(node);
+                        continue;
+                    }
+                    while (conns->next != nullptr) {
                         conns = conns->next;
                     }
-                    conns = new SingleNode<GraphNode<T> *>(node);
+                    conns->next = new SingleNode<GraphNode<T> *>(node);
                 }
             }
             list->Reset();

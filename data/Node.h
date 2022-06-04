@@ -25,7 +25,18 @@ namespace Data {
     public:
         int id;
         SingleNode<GraphNode<T> *> *connections = nullptr;
+
         explicit GraphNode(int id, T val) : id(id), Node<T>(val) {}
+    };
+
+    template<typename T>
+    class TreeNode : public Node<T> {
+    public:
+        TreeNode<T>* up = nullptr;
+        TreeNode<T>* left = nullptr;
+        TreeNode<T>* right = nullptr;
+
+        explicit TreeNode(T val) : Node<T>(val) {}
     };
 
 }

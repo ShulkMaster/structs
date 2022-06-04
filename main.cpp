@@ -1,14 +1,14 @@
 #include <iostream>
-#include "Graph.h"
+#include "Tree.h"
 
 int main() {
-    Data::Graph<int> graph;
+    Data::Tree<int> tree;
     for (int i = 0; i < 10; ++i) {
-        graph.Insert(new Data::GraphNode<int>(i, i));
+        tree.Insert(new Data::TreeNode<int>(i));
     }
-    do {
-        std::cout << graph.GetCurrent()->value << "\n";
-    } while (graph.Next());
+//    do {
+//        std::cout << tree. << "\n";
+//    } while (graph.Next());
     std::cout << std::endl;
     return 0;
 }
