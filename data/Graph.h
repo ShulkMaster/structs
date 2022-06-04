@@ -2,6 +2,7 @@
 #define REDEMPTION_GRAPH_H
 
 #include "SingleList.h"
+#include <cstdlib>
 
 namespace Data {
 
@@ -19,6 +20,18 @@ namespace Data {
             if (list->Count() >= maxNodes) {
                 return false;
             }
+
+            // todo check if id exist
+            list->ForEach([&node](GraphNode<T> *gNode) -> void {
+                if (rand() % 3 == 0) {
+                    //node->connections = new SingleNode<GraphNode<T> *>(gNode);
+                    auto conns = gNode->connections;
+                    while (conns != nullptr) {
+                        conns = conns->next;
+                    }
+                    conns->next = new SingleNode<GraphNode<T> *>(node);
+                }
+            });
 
             return list->Insert(node);
         }

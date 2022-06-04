@@ -8,7 +8,8 @@ namespace Data {
     class Node {
     public:
         T value;
-        explicit Node(T val): value(val){}
+
+        explicit Node(T val) : value(val) {}
     };
 
     template<typename T>
@@ -22,9 +23,9 @@ namespace Data {
     template<typename T>
     class GraphNode : public Node<T> {
     public:
-        GraphNode<T> *connections = nullptr;
-
-        explicit GraphNode(T val) : Node<T>(val) {}
+        int id;
+        SingleNode<GraphNode<T> *> *connections = nullptr;
+        explicit GraphNode(int id, T val) : id(id), Node<T>(val) {}
     };
 
 }
