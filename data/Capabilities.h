@@ -8,11 +8,11 @@ public:
 
     virtual bool Next() = 0;
 
-    virtual void Next(int forward) = 0;
+    virtual bool Next(int forward) = 0;
 
     virtual int Count() = 0;
 
-    virtual void ForEach(void (*func)(T)) = 0;
+    virtual void Reset() = 0;
 };
 
 template<typename T>

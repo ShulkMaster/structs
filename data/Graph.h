@@ -11,6 +11,8 @@ namespace Data {
     private:
         const int maxNodes = 25;
         Data::SingleList<GraphNode<T> *> *list = nullptr;
+        Data::SingleList<GraphNode<T> *> *lCopy = nullptr;
+
     public:
         Graph() {
             list = new Data::SingleList<GraphNode<T> *>();
@@ -22,17 +24,18 @@ namespace Data {
             }
 
             // todo check if id exist
-            list->ForEach([&node](GraphNode<T> *gNode) -> void {
-                if (rand() % 3 == 0) {
-                    //node->connections = new SingleNode<GraphNode<T> *>(gNode);
+            while (list->Next()) {
+                auto gNode = list->GetCurrent();
+                if (node->value % gNode->value == 0) {
+                    node->connections = new SingleNode<GraphNode<T> *>(gNode);
                     auto conns = gNode->connections;
                     while (conns != nullptr) {
                         conns = conns->next;
                     }
-                    conns->next = new SingleNode<GraphNode<T> *>(node);
+                    conns = new SingleNode<GraphNode<T> *>(node);
                 }
-            });
-
+            }
+            list->Reset();
             return list->Insert(node);
         }
 
@@ -45,23 +48,23 @@ namespace Data {
         }
 
         GraphNode<T> *GetCurrent() override {
-            return nullptr;
+            return list->GetCurrent();
         }
 
         bool Next() override {
-            return false;
+            return list->Next();
         }
 
-        void Next(int forward) override {
-
+        bool Next(int forward) override {
+            return list->Next(forward);
         }
 
         int Count() override {
             return list->Count();
         }
 
-        void ForEach(void (*func)(GraphNode<T> *)) override {
-            list->ForEach(func);
+        void Reset() override {
+            list->Reset();
         }
 
     };

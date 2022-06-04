@@ -10,6 +10,7 @@ namespace Data {
     class SingleList : public IMutable<T>, public IEnumerable<T> {
     private:
         SingleNode<T> *root = nullptr;
+        SingleNode<T> *stack = nullptr;
         int count = 0;
 
     public:
@@ -21,7 +22,7 @@ namespace Data {
             }
 
             auto temp = root;
-            while (temp->next != nullptr){
+            while (temp->next != nullptr) {
                 temp = temp->next;
             }
             temp->next = new SingleNode<T>(node);
@@ -33,12 +34,8 @@ namespace Data {
             return false;
         }
 
-
-        void ForEach(void (*func)(T node)) override {
-            auto temp = root;
-            for (; temp != nullptr; temp = temp->next) {
-                func(temp->value);
-            }
+        void Reset() override {
+            stack = root;
         }
 
         bool Replace(int position) override {
@@ -46,16 +43,22 @@ namespace Data {
         }
 
         T GetCurrent() override {
-            return root->value;
+            return stack->value;
         }
 
         bool Next() override {
-
-            return false;
+            if (stack == nullptr || stack->next == nullptr) return false;
+            stack = stack->next;
+            return true;
         }
 
-        void Next(int forward) override {
-
+        bool Next(int forward) override {
+            for (int i = 0; i < forward; ++i) {
+                if (!Next()) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         int Count() override {
