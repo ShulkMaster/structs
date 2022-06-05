@@ -19,6 +19,24 @@ namespace Data {
             list = new Data::SingleList<GraphNode<T> *>();
         }
 
+        int ConnectionsAt(GraphNode<T> *node) {
+            auto copy = node->connections;
+            int count = 0;
+            while (copy != nullptr) {
+                copy = copy->next;
+                count++;
+            }
+            return count;
+        }
+
+        int ConnectionsAt(int index) {
+            list->Reset();
+            list->Next(index);
+            auto node = list->GetCurrent();
+            if(node == nullptr) return 0;
+            return ConnectionsAt(node);
+        }
+
         bool Insert(GraphNode<T> *node) override {
             if (list->Count() >= maxNodes) {
                 return false;
