@@ -5,6 +5,7 @@
 #include <ctime>
 
 class Champion {
+public:
     std::wstring name;
     short age;
     std::wstring className;
@@ -12,6 +13,14 @@ class Champion {
 
     std::wstring ToDate() {
         return std::to_wstring(release.tm_mday).append(release.tm_mon, 1);
+    }
+
+    bool operator<(const Champion &champ) const {
+        return name < champ.name;
+    }
+
+    bool operator<(const Champion* champ) const {
+        return name < champ->name;
     }
 };
 

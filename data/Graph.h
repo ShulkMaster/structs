@@ -26,7 +26,7 @@ namespace Data {
             // todo check if id exist
             while (list->Next()) {
                 auto gNode = list->GetCurrent();
-                if (node->value % gNode->value == 0) {
+                if (node->id % gNode->id == 0) {
                     node->connections = new SingleNode<GraphNode<T> *>(gNode);
                     auto conns = gNode->connections;
                     if (conns == nullptr) {

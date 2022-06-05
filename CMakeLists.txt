@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 14)
 add_executable(redemption)
 
 target_include_directories(redemption PUBLIC
+        app
+        entities
         data
         )
 
