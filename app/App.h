@@ -76,6 +76,18 @@ public:
         auto graph = new Graph<Tree<Champion>>();
         for (int i = 0; i < 20; ++i) {
             auto trick = new GraphNode<Tree<Champion>>(i, Tree<Champion>());
+            auto tree = Data::Tree<Champion>();
+            for (int j = 3; j < 6; ++j) {
+                auto champ = Champion();
+                auto champ2 = Champion();
+                champ.age = (8 - j) * 5;
+                champ2.age = (2 + j) * 5;
+                champ.name = std::wstring(L"Melapela ").append(std::to_wstring(j));
+                champ2.name = std::wstring(L"Melape").append(std::to_wstring(6 - j));
+                tree.Insert(new TreeNode<Champion>(champ));
+                tree.Insert(new TreeNode<Champion>(champ2));
+            }
+            trick->value = tree;
             graph->Insert(trick);
         }
         auto *m = new MainMenu(graph);
@@ -84,6 +96,9 @@ public:
         while (continues) {
             int action = ReadPress();
             Refresh();
+            if(action == CTRL_KEY('q')){
+                break;
+            }
             continues = m->HandleKey(action);
             m->Print();
         }

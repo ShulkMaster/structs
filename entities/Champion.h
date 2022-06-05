@@ -7,7 +7,7 @@
 class Champion {
 public:
     std::wstring name;
-    short age;
+    int age;
     std::wstring className;
     std::tm release;
 

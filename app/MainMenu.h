@@ -1,12 +1,8 @@
 #ifndef REDEMPTION_MAINMENU_H
 #define REDEMPTION_MAINMENU_H
 
-#include "Controls.h"
-#include <iostream>
 #include "Graph.h"
-#include "Tree.h"
-#include "Champion.h"
-
+#include "TreeMenu.h"
 
 using namespace Data;
 
@@ -15,25 +11,30 @@ private:
     int cursorX = 0;
     int cursorY = 0;
     Graph<Tree<Champion>> *graph = nullptr;
+    TreeMenu *submenu;
     const int MaxRows = 10;
     const int MaxConnectionToShow = 10;
     bool isEditing = false;
+    bool isInSubmenu = false;
 
 public:
     const wchar_t Name[11] = L"Grafo LOL";
 
     explicit MainMenu(Graph<Tree<Champion>> *g) {
         this->graph = g;
+        this->submenu = new TreeMenu(Name);
     }
 
     bool HandleKey(int action) {
+        if (isInSubmenu) {
+            isInSubmenu = submenu->HandleKey(action);
+            return true;
+        }
         switch (action) {
             case CTRL_KEY('e'): {
                 isEditing = !isEditing;
                 break;
             }
-            case CTRL_KEY('q'):
-                return false;
             case 'w':
             case 'W':
             case UpArrow: {
@@ -57,6 +58,12 @@ public:
                 cursorX = std::min(xMax - 1, cursorX + 1);
                 break;
             }
+            case ENTER: {
+                isInSubmenu = true;
+                graph->Reset();
+                graph->Next(cursorY);
+                submenu->SetTree(graph->GetCurrent());
+            }
             default:
                 break;
         }
@@ -64,6 +71,10 @@ public:
     }
 
     void Print() {
+        if(isInSubmenu){
+            submenu->Print();
+            return;
+        }
         std::wprintf(L"\x1B[31mTexting\033[0m\t\t");
         std::wprintf(L"\x1B[32mTexting\033[0m\t\t");
         std::wprintf(L"\x1B[33mTexting\033[0m\t\t");

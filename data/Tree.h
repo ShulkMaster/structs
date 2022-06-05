@@ -7,11 +7,12 @@
 namespace Data {
 
     template<typename T>
-    class Tree : public IMutable<TreeNode<T> *>, public IEnumerable<TreeNode<T> *> {
+    class Tree : public IMutable<TreeNode<T> *> {
+    public:
+        int level = 0;
     private:
         TreeNode<T> *root = nullptr;
         TreeNode<T> *stack = nullptr;
-        int jumps = 0;
         int count = 0;
 
         bool Insert(TreeNode<T> *node, TreeNode<T> *tree) {
@@ -36,8 +37,8 @@ namespace Data {
         TreeNode<T> *JumpToNext(TreeNode<T> *tree) {
             if (tree->up == nullptr) return tree;
             auto up = tree->up;
-            for (int i = jumps; i > 0; --i) {
-                jumps--;
+            for (int i = level; i > 0; --i) {
+                level--;
                 up = up->up;
             }
             if (up->right == nullptr) {
@@ -50,7 +51,7 @@ namespace Data {
 
     public:
 
-        TreeNode<T> * GetRoot() {
+        TreeNode<T> *GetRoot() {
             return root;
         }
 
@@ -72,42 +73,42 @@ namespace Data {
             return false;
         }
 
-        TreeNode<T> *GetCurrent() override {
+        TreeNode<T> *GetCurrent() {
             return stack;
         }
 
-        bool Next() override {
-            if (stack->left != nullptr) {
-                stack = stack->left;
-                return true;
-            }
-            if (stack->right != nullptr) {
-                stack = stack->right;
-                jumps++;
-                return true;
-            }
-
-            auto next = JumpToNext(stack);
-            if (stack == next || stack == root) {
+        bool NextRight() {
+            if (stack->right == nullptr) {
                 return false;
             }
-            if(next->right == stack){
-                next = JumpToNext(next);
-            }
-            jumps++;
-            stack = next->right;
+            level++;
+            stack = stack->right;
             return true;
         }
 
-        bool Next(int forward) override {
-            return false;
+        bool NextLeft() {
+            if (stack->left == nullptr) {
+                return false;
+            }
+            level++;
+            stack = stack->left;
+            return true;
         }
 
-        int Count() override {
+        bool NextUp() {
+            if (stack->up == nullptr) {
+                return false;
+            }
+            level--;
+            stack = stack->up;
+            return true;
+        }
+
+        int Count() {
             return count;
         }
 
-        void Reset() override {
+        void Reset() {
             stack = root;
         }
     };
