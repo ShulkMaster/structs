@@ -9,11 +9,12 @@ namespace Data {
     template<typename T>
     class Graph : public IMutable<GraphNode<T> *>, public IEnumerable<GraphNode<T> *> {
     private:
-        const int maxNodes = 25;
         Data::SingleList<GraphNode<T> *> *list = nullptr;
         Data::SingleList<GraphNode<T> *> *lCopy = nullptr;
 
     public:
+        static const int maxNodes = 25;
+
         Graph() {
             list = new Data::SingleList<GraphNode<T> *>();
         }

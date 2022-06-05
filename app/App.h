@@ -73,15 +73,23 @@ public:
     }
 
     void Run() {
-        auto *m = new MainMenu();
+        auto graph = new Graph<Tree<Champion>>();
+        for (int i = 0; i < 20; ++i) {
+            auto trick = new GraphNode<Tree<Champion>>(i, Tree<Champion>());
+            graph->Insert(trick);
+        }
+        auto *m = new MainMenu(graph);
         bool continues = true;
         PrintBanner();
         while (continues) {
             int action = ReadPress();
             Refresh();
-            continues = m->TakeAction(action);
+            continues = m->HandleKey(action);
+            m->Print();
         }
+        std::wcout << Jump << L"Bye bye!" << Jump << std::endl;
         delete m;
+        delete graph;
     }
 };
 
