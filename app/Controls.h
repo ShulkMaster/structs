@@ -2,6 +2,7 @@
 #define REDEMPTION_CONTROLS_H
 
 #define CTRL_KEY(k) ((k) & 0x1f)
+#define CONST_SIZE(A, B) (sizeof(A) / sizeof(B))
 
 const char Seq = '\x1b';
 const wchar_t *Jump = L"\r\n";

@@ -89,6 +89,16 @@ namespace Data {
             return count;
         }
 
+        void Clear() {
+            while (root != nullptr) {
+                auto temp = root->next;
+                delete root->value;
+                delete root;
+                root = temp;
+            }
+            stack = root;
+        }
+
     };
 
 }

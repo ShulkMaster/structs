@@ -1,7 +1,6 @@
 #ifndef REDEMPTION_APP_H
 #define REDEMPTION_APP_H
 
-#include "iostream"
 #include "Controls.h"
 #include "MainMenu.h"
 
@@ -50,11 +49,6 @@ public:
             perror("read");
             exit(1);
         }
-        if (iscntrl(byteRead)) {
-            std::wprintf(L"%d\r\n", byteRead);
-        } else {
-            wprintf(L"%d ('%c')\r\n", byteRead, byteRead);
-        }
         if (byteRead != Seq) {
             keyCode = 0 + byteRead;
             return keyCode;
@@ -82,8 +76,8 @@ public:
                 auto champ2 = Champion();
                 champ.age = (8 - j) * 5;
                 champ2.age = (2 + j) * 5;
-                champ.name = std::wstring(L"Melapela ").append(std::to_wstring(j));
-                champ2.name = std::wstring(L"Melape").append(std::to_wstring(6 - j));
+                champ.name = std::wstring(L"Champion ").append(std::to_wstring(j));
+                champ2.name = std::wstring(L"champ").append(std::to_wstring(6 - j));
                 tree.Insert(new TreeNode<Champion>(champ));
                 tree.Insert(new TreeNode<Champion>(champ2));
             }
