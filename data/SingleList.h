@@ -31,7 +31,29 @@ namespace Data {
         }
 
         bool Delete(T node) override {
-            return false;
+            Reset();
+            if (node == nullptr) return false;
+            if (stack->value == node) {
+                auto temp = stack->next;
+                delete stack;
+                root = temp;
+                stack = temp;
+                return true;
+            }
+            auto prev = stack;
+            stack = stack->next;
+            while (stack != nullptr) {
+                auto temp = stack->next;
+                if (stack->value == node) {
+                    prev->next = temp;
+                    delete stack;
+                    stack = temp;
+                    continue;
+                }
+                prev = stack;
+                stack = temp;
+            }
+            return true;
         }
 
         void Reset() override {
