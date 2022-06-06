@@ -8,31 +8,36 @@ using namespace Data;
 
 class MainMenu {
 private:
+    enum State {
+        Neutral,
+        Adding,
+        Editing,
+        Submenu,
+    };
     int cursorX = 0;
     int cursorY = 0;
     Graph<Tree<Champion>> *graph = nullptr;
     TreeMenu *submenu;
     const int MaxRows = 10;
     const int MaxConnectionToShow = 10;
-    bool isEditing = false;
-    bool isInSubmenu = false;
+    State state = Neutral;
+    ushort editOptionIndex = 0;
 
-public:
-    const wchar_t Name[11] = L"Grafo LOL";
+    const wchar_t *options[4] = {
+            L"1) Create node 😎\t",
+            L"2) Update node 😅\t",
+            L"3) Delete node 😈\t",
+            L"4) End edit",
+    };
 
-    explicit MainMenu(Graph<Tree<Champion>> *g) {
-        this->graph = g;
-        this->submenu = new TreeMenu(Name);
-    }
+    const ushort optionNumber = sizeof(options) / sizeof(wchar_t *);
 
-    bool HandleKey(int action) {
-        if (isInSubmenu) {
-            isInSubmenu = submenu->HandleKey(action);
-            return true;
-        }
+private:
+    void handleMain(int action) {
         switch (action) {
             case CTRL_KEY('e'): {
-                isEditing = !isEditing;
+                // toggle state logic
+                state = state == Neutral ? Editing : Neutral;
                 break;
             }
             case 'w':
@@ -59,7 +64,7 @@ public:
                 break;
             }
             case ENTER: {
-                isInSubmenu = true;
+                state = Submenu;
                 graph->Reset();
                 graph->Next(cursorY);
                 submenu->SetTree(graph->GetCurrent());
@@ -67,11 +72,98 @@ public:
             default:
                 break;
         }
+    }
+
+    void handleAction() {
+        switch (editOptionIndex) {
+            case 0: {
+                break;
+            }
+            case 1:
+                break;
+            case 2:
+                graph->Reset();
+                graph->Next(cursorY);
+                graph->Delete(graph->GetCurrent());
+                state = Neutral;
+                break;
+            case 3:
+            default:
+                state = Neutral;
+                editOptionIndex = 0;
+                break;
+        }
+    }
+
+
+    bool HandleEditKey(int action) {
+        switch (action) {
+            case CTRL_KEY('e'): {
+                // toggle state logic
+                state = state == Neutral ? Editing : Neutral;
+                break;
+            }
+            case RightArrow:
+            case 'd':
+            case 'D': {
+                editOptionIndex = std::min(optionNumber - 1, editOptionIndex + 1);
+                break;
+            }
+            case LeftArrow:
+            case 'a':
+            case 'A': {
+                editOptionIndex = std::max(0, editOptionIndex - 1);
+                break;
+            }
+            case ENTER: {
+                handleAction();
+                break;
+            }
+            default:
+                break;
+        }
+        return true;
+    }
+
+    void PrintEditMenu() {
+        for (ushort i = 0; i < optionNumber; ++i) {
+            if (editOptionIndex == i) {
+                std::wcout << L"\x1B[34m=>\033[0m" << options[i];
+                continue;
+            }
+            std::wcout << options[i];
+        }
+        std::wcout << Jump << std::endl;
+    }
+
+public:
+    const wchar_t Name[11] = L"Grafo LOL";
+
+    explicit MainMenu(Graph<Tree<Champion>> *g) {
+        this->graph = g;
+        this->submenu = new TreeMenu(Name);
+    }
+
+    bool HandleKey(int action) {
+        switch (state) {
+            case Neutral:
+                handleMain(action);
+                break;
+            case Adding:
+                break;
+            case Editing:
+                HandleEditKey(action);
+                break;
+            case Submenu:
+                bool continues = submenu->HandleKey(action);
+                state = continues ? state : Neutral;
+                break;
+        }
         return true;
     }
 
     void Print() {
-        if(isInSubmenu){
+        if (state == Submenu) {
             submenu->Print();
             return;
         }
@@ -80,6 +172,7 @@ public:
         std::wprintf(L"\x1B[33mTexting\033[0m\t\t");
         std::wprintf(L"\x1B[34mTexting\033[0m\t\t");
         std::wprintf(L"\x1B[35mTexting\033[0m\n");
+        std::wprintf(Jump);
         std::wcout << Name << Jump;
         graph->Reset();
         if (graph->Count() < 1) {
@@ -88,8 +181,9 @@ public:
             std::wcout << L"Node ID : Conexiones" << Jump;
         }
         RenderNodes();
-        if (isEditing) {
-            std::wcout << L"me la pela" << Jump;
+        if (state == Editing) {
+            PrintEditMenu();
+            return;
         }
         std::wcout << L"navigate ← ↑ → ↓      ⏎ enter node      Edit Ctrl + E       Quit Ctrl + Q" << std::endl;
     }

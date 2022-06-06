@@ -40,7 +40,7 @@ public:
         write(STDOUT_FILENO, "\x1b[H", 3);
     }
 
-    int ReadPress() {
+    int static ReadPress() {
         int keyCode;
         char byteRead;
         int res = read(STDIN_FILENO, &byteRead, 1);

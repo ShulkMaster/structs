@@ -33,7 +33,7 @@ namespace Data {
             list->Reset();
             list->Next(index);
             auto node = list->GetCurrent();
-            if(node == nullptr) return 0;
+            if (node == nullptr) return 0;
             return ConnectionsAt(node);
         }
 
@@ -63,7 +63,35 @@ namespace Data {
         }
 
         bool Delete(GraphNode<T> *value) override {
-            return false;
+            Reset();
+            do {
+                auto listNode = list->GetCurrent();
+                if (listNode == nullptr || listNode->connections == nullptr) continue;
+                SingleNode<GraphNode<T> *> *prev = nullptr;
+                SingleNode<GraphNode<T> *> *cons = listNode->connections;
+                if (value->id == cons->value->id) {
+                    auto temp = cons;
+                    listNode->connections = cons->next;
+                    delete temp;
+                    continue;
+                }
+
+                prev = cons;
+                cons = cons->next;
+
+                while (cons != nullptr) {
+                    auto temp = cons->next;
+                    if (cons->value->id == value->id) {
+                        prev->next = temp;
+                        delete cons;
+                        cons = temp;
+                        continue;
+                    }
+                    prev = cons;
+                    cons = cons->next;
+                }
+            } while (list->Next());
+            return list->Delete(value);
         }
 
         bool Replace(int position) override {
