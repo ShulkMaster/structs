@@ -76,8 +76,8 @@ public:
                 auto champ2 = Champion();
                 champ.age = (8 - j) * 5;
                 champ2.age = (2 + j) * 5;
-                champ.name = std::wstring(L"Champion ").append(std::to_wstring(j));
-                champ2.name = std::wstring(L"champ").append(std::to_wstring(6 - j));
+                champ.name = std::wstring(L"Champion").append(std::to_wstring(j));
+                champ2.name = std::wstring(L"Champ").append(std::to_wstring(6 - j));
                 tree.Insert(new TreeNode<Champion>(champ));
                 tree.Insert(new TreeNode<Champion>(champ2));
             }

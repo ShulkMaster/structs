@@ -89,6 +89,7 @@ private:
                 graph->Reset();
                 graph->Next(cursorY);
                 graph->Delete(graph->GetCurrent());
+                cursorY = std::max(0, cursorY - 1);
                 state = Neutral;
                 break;
             case 3:
@@ -232,12 +233,12 @@ public:
             PrintAddingMenu();
             return;
         }
-        std::wprintf(L"\x1B[31mTexting\033[0m\t\t");
-        std::wprintf(L"\x1B[32mTexting\033[0m\t\t");
-        std::wprintf(L"\x1B[33mTexting\033[0m\t\t");
-        std::wprintf(L"\x1B[34mTexting\033[0m\t\t");
-        std::wprintf(L"\x1B[35mTexting\033[0m\n");
-        std::wprintf(Jump);
+//        std::wprintf(L"\x1B[31mTexting\033[0m\t\t");
+//        std::wprintf(L"\x1B[32mTexting\033[0m\t\t");
+//        std::wprintf(L"\x1B[33mTexting\033[0m\t\t");
+//        std::wprintf(L"\x1B[34mTexting\033[0m\t\t");
+//        std::wprintf(L"\x1B[35mTexting\033[0m\n");
+//        std::wprintf(Jump);
         std::wcout << Name << Jump;
         graph->Reset();
         if (graph->Count() < 1) {
