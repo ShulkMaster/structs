@@ -90,16 +90,20 @@ namespace Data {
             Reset();
             if (value == nullptr) return false;
             if (value->value == stack->value) {
-                if (stack->left != nullptr) {
-                    stack = stack->left;
-                    Insert(root->right);
+                auto left = stack->left;
+                auto right = stack->right;
+                if(left != nullptr) {
+                    left->up = nullptr;
+                    Insert(right, left);
+                    stack = left;
                     delete root;
                     root = stack;
-                    stack->up = nullptr;
                     return true;
                 }
-                if (stack->right != nullptr) {
-                    stack = stack->right;
+                if(right != nullptr){
+                    stack = right;
+                    right->up = nullptr;
+                    stack = right;
                     delete root;
                     root = stack;
                     return true;
@@ -138,7 +142,7 @@ namespace Data {
         }
 
         bool NextUp() {
-            if (stack->up == nullptr) {
+            if (stack == nullptr || stack->up == nullptr) {
                 return false;
             }
             level--;
