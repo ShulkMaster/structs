@@ -38,6 +38,7 @@ namespace Data {
                 delete stack;
                 root = temp;
                 stack = temp;
+                count--;
                 return true;
             }
             auto prev = stack;
@@ -48,6 +49,7 @@ namespace Data {
                     prev->next = temp;
                     delete stack;
                     stack = temp;
+                    count--;
                     continue;
                 }
                 prev = stack;

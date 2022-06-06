@@ -8,28 +8,29 @@
 
 class TreeMenu {
 private:
-    int level = 0;
+    enum State {
+        Neutral,
+        Adding,
+        Editing,
+        Submenu,
+    };
+
     const wchar_t *Name = nullptr;
-    bool isEditing = false;
+    State state = Neutral;
     Data::GraphNode<Data::Tree<Champion>> *node = nullptr;
     Data::Tree<Champion> *tree;
     const int width = 100;
-public:
-    TreeMenu(const wchar_t *name) {
-        this->Name = name;
-    }
+    const wchar_t *options[4] = {
+            L"1) Create node 😎\t",
+            L"2) Update node 😅\t",
+            L"3) Delete node 😈\t",
+            L"4) End edit",
+    };
+    ushort editOptionIndex = 0;
 
-    void SetTree(Data::GraphNode<Data::Tree<Champion>> *pNode) {
-        this->node = pNode;
-        tree = &(node->value);
-    }
+    const ushort optionNumber = sizeof(options) / sizeof(wchar_t *);
 
-    void Clear() {
-        node = nullptr;
-        tree = nullptr;
-    }
-
-    bool HandleKey(int action) {
+    bool HandleMainKey(int action) {
         switch (action) {
             case 'w':
             case 'W':
@@ -49,24 +50,109 @@ public:
                 break;
             }
             case CTRL_KEY('e'): {
-                isEditing = !isEditing;
+                state = state == Neutral ? Editing : Neutral;
                 break;
             }
-            case CTRL_KEY('b'): {
-                isEditing = false;
+            case CTRL_KEY('b'):
                 return false;
-            }
             default:
                 break;
         }
         return true;
+    }
 
+    void HandleAction() {
+        switch (editOptionIndex) {
+            case 0: {
+                break;
+            }
+            case 1:
+                break;
+            case 2:
+                tree->Delete(tree->GetCurrent());
+                state = Neutral;
+                break;
+            case 3:
+            default:
+                state = Neutral;
+                editOptionIndex = 0;
+                break;
+        }
+    }
+
+    void HandleEditing(int action) {
+        switch (action) {
+            case CTRL_KEY('e'): {
+                // toggle state logic
+                state = state == Neutral ? Editing : Neutral;
+                break;
+            }
+            case RightArrow:
+            case 'd':
+            case 'D': {
+                editOptionIndex = std::min(optionNumber - 1, editOptionIndex + 1);
+                break;
+            }
+            case LeftArrow:
+            case 'a':
+            case 'A': {
+                editOptionIndex = std::max(0, editOptionIndex - 1);
+                break;
+            }
+            case ENTER: {
+                HandleAction();
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+public:
+    explicit TreeMenu(const wchar_t *name) {
+        this->Name = name;
+    }
+
+    void SetTree(Data::GraphNode<Data::Tree<Champion>> *pNode) {
+        this->node = pNode;
+        tree = &(node->value);
+        state = Neutral;
+    }
+
+    bool HandleKey(int action) {
+        switch (state) {
+            case Neutral:
+                return HandleMainKey(action);
+            case Adding:
+                break;
+            case Editing:
+                HandleEditing(action);
+                break;
+            case Submenu:
+                break;
+        }
+        return true;
+    }
+
+    void PrintEditMenu() {
+        for (ushort i = 0; i < optionNumber; ++i) {
+            if (editOptionIndex == i) {
+                std::wcout << L"\x1B[34m=>\033[0m" << options[i];
+                continue;
+            }
+            std::wcout << options[i];
+        }
+        std::wcout << Jump << std::endl;
     }
 
     void Print() {
         std::wcout << Name << L"/Node " << node->id << Jump;
         std::wcout << L"Nivel" << tree->level << Jump;
         RenderNodes();
+        if (state == Editing) {
+            PrintEditMenu();
+            return;
+        }
         std::wcout << L"navigate ← ↑ →       ⏎ enter node      Edit Ctrl + E      Go Back Ctrl + B" << std::endl;
     }
 

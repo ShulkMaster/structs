@@ -16,6 +16,7 @@ namespace Data {
         int count = 0;
 
         bool Insert(TreeNode<T> *node, TreeNode<T> *tree) {
+            if (node == nullptr) return false;
             node->up = tree;
             if (node->value < tree->value) {
                 if (tree->left == nullptr) {
@@ -49,6 +50,25 @@ namespace Data {
             return up;
         }
 
+        bool Delete(TreeNode<T> *node, TreeNode<T> *tree) {
+            if (tree == nullptr) return false;
+            if (tree->value == node->value) {
+                auto parent = tree->up;
+                auto left = tree->left;
+                auto right = tree->right;
+                if (parent->left == tree) {
+                    parent->left = nullptr;
+                } else {
+                    parent->right = nullptr;
+                }
+                delete tree;
+                Insert(left, parent);
+                Insert(right, parent);
+                return Delete(node, parent->left) || Delete(node, parent->right);
+            }
+            return Delete(node, tree->left) || Delete(node, tree->right);
+        }
+
     public:
 
         TreeNode<T> *GetRoot() {
@@ -56,6 +76,7 @@ namespace Data {
         }
 
         bool Insert(TreeNode<T> *node) override {
+            if (node == nullptr) return false;
             if (root == nullptr) {
                 root = node;
                 stack = root;
@@ -66,7 +87,28 @@ namespace Data {
         }
 
         bool Delete(TreeNode<T> *value) override {
-            return false;
+            Reset();
+            if (value == nullptr) return false;
+            if (value->value == stack->value) {
+                if (stack->left != nullptr) {
+                    stack = stack->left;
+                    Insert(root->right);
+                    delete root;
+                    root = stack;
+                    stack->up = nullptr;
+                    return true;
+                }
+                if (stack->right != nullptr) {
+                    stack = stack->right;
+                    delete root;
+                    root = stack;
+                    return true;
+                }
+                delete root;
+                root = stack = nullptr;
+                return true;
+            }
+            return Delete(value, stack->left) || Delete(value, stack->right);
         }
 
         bool Replace(int position) override {

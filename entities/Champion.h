@@ -22,6 +22,10 @@ public:
     bool operator<(const Champion* champ) const {
         return name < champ->name;
     }
+
+    bool operator==(const Champion &champ) const {
+        return name == champ.name;
+    }
 };
 
 #endif //REDEMPTION_CHAMPION_H
