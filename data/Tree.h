@@ -36,21 +36,6 @@ namespace Data {
             return Insert(node, tree->right);
         }
 
-        TreeNode<T> *JumpToNext(TreeNode<T> *tree) {
-            if (tree->up == nullptr) return tree;
-            auto up = tree->up;
-            for (int i = level; i > 0; --i) {
-                level--;
-                up = up->up;
-            }
-            if (up->right == nullptr) {
-                while (up->right == nullptr && up != nullptr) {
-                    up = up->up;
-                }
-            }
-            return up;
-        }
-
         bool Delete(TreeNode<T> *node, TreeNode<T> *tree) {
             if (tree == nullptr) return false;
             if (tree->value == node->value) {
@@ -70,19 +55,29 @@ namespace Data {
             return Delete(node, tree->left) || Delete(node, tree->right);
         }
 
-        void DeleteTree(TreeNode<T> *node) {
-            if(node == nullptr) return;
-            std::wcout << L"\tDeleting tree node" << node->value << Jump;
-            DeleteTree(node->left);
-            DeleteTree(node->right);
+        void DeleteTree(TreeNode<T> *node, int printed) {
+            if (node == nullptr) return;
+            if (printed > 4) {
+                printed = 0;
+                std::wcout << Jump;
+            } else {
+                printed++;
+            }
+            if (printed == 0) {
+                std::wcout << L"\t\t";
+            }
+            std::wcout << node->value << L", ";
+            DeleteTree(node->left, printed);
+            DeleteTree(node->right, printed);
             delete node;
         }
 
     public:
 
         virtual ~Tree() {
-            std::wcout << L"\tDeleting " << L"Tree" << Jump;
-            DeleteTree(root);
+            std::wcout << L"\tDeleting " << L"Tree" << Jump << L"\t\t";
+            DeleteTree(root, 0);
+            std::wcout << Jump;
         }
 
         TreeNode<T> *GetRoot() {
@@ -106,7 +101,7 @@ namespace Data {
             if (value->value == stack->value) {
                 auto left = stack->left;
                 auto right = stack->right;
-                if(left != nullptr) {
+                if (left != nullptr) {
                     left->up = nullptr;
                     Insert(right, left);
                     stack = left;
@@ -114,7 +109,7 @@ namespace Data {
                     root = stack;
                     return true;
                 }
-                if(right != nullptr){
+                if (right != nullptr) {
                     stack = right;
                     right->up = nullptr;
                     stack = right;

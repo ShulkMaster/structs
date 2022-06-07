@@ -20,10 +20,6 @@ namespace Data {
         SingleNode<T> *next = nullptr;
 
         explicit SingleNode(T val) : Node<T>(val) {}
-
-        virtual ~SingleNode() {
-            std::wcout << L"L";
-        }
     };
 
     template<typename T>
@@ -46,6 +42,7 @@ namespace Data {
                 curren = next;
             }
             std::wcout << Jump;
+            delete this->value;
         }
     };
 

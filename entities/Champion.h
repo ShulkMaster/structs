@@ -29,10 +29,6 @@ public:
     }
 
     friend std::wostream& operator<<(std::wostream& os, const Champion &champion);
-
-    virtual ~Champion() {
-        std::wcout << L"Deleting " << name << Jump;
-    }
 };
 
 std::wostream &operator<<(std::wostream &os, const Champion &champion) {

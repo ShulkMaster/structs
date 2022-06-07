@@ -82,7 +82,7 @@ namespace Data {
             do {
                 auto listNode = list->GetCurrent();
                 if (listNode == nullptr || listNode->connections == nullptr) continue;
-                SingleNode<GraphNode<T> *> *prev = nullptr;
+                SingleNode<GraphNode<T> *> *prev;
                 SingleNode<GraphNode<T> *> *cons = listNode->connections;
                 if (value->id == cons->value->id) {
                     auto temp = cons;
@@ -90,7 +90,6 @@ namespace Data {
                     delete temp;
                     continue;
                 }
-
                 prev = cons;
                 cons = cons->next;
 
@@ -106,7 +105,9 @@ namespace Data {
                     cons = cons->next;
                 }
             } while (list->Next());
-            return list->Delete(value);
+            bool wasDeleted = list->Delete(value);
+            delete value;
+            return wasDeleted;
         }
 
         bool Replace(int position) override {

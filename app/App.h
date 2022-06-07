@@ -49,11 +49,6 @@ public:
             perror("read");
             exit(1);
         }
-        if (iscntrl(byteRead)) {
-            std::wprintf(L"%d\r\n", byteRead);
-        } else {
-            wprintf(L"%d ('%c')\r\n", byteRead, byteRead);
-        }
         if (byteRead != Seq) {
             keyCode = 0 + byteRead;
             return keyCode;
@@ -71,7 +66,7 @@ public:
         return ESC;
     }
 
-    void Run() {
+    static void Run() {
         auto graph = new Graph<Tree<Champion>*>();
         for (int i = 0; i < 20; ++i) {
             auto trick = new GraphNode<Tree<Champion> *>(i, L"Node", new Tree<Champion>());
@@ -91,7 +86,6 @@ public:
             }
             trick->value = tree;
             graph->Insert(trick);
-            std::wcout << i << L"loop" << Jump;
         }
         auto *m = new MainMenu(graph);
         bool continues = true;
@@ -105,9 +99,9 @@ public:
             continues = m->HandleKey(action);
             m->Print();
         }
-        std::wcout << Jump << L"Bye bye!" << Jump << std::endl;
         delete m;
         delete graph;
+        std::wcout << Jump << L"Bye bye!" << Jump << std::endl;
     }
 };
 
