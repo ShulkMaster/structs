@@ -69,7 +69,7 @@ public:
     void Run() {
         auto graph = new Graph<Tree<Champion>>();
         for (int i = 0; i < 20; ++i) {
-            auto trick = new GraphNode<Tree<Champion>>(i, Tree<Champion>());
+            auto trick = new GraphNode<Tree<Champion>>(i, L"Node", Tree<Champion>());
             auto tree = Data::Tree<Champion>();
             for (int j = 3; j < 6; ++j) {
                 auto champ = Champion();

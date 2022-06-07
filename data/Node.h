@@ -1,3 +1,5 @@
+#include <utility>
+
 #ifndef REDEMPTION_NODE_H
 #define REDEMPTION_NODE_H
 
@@ -24,9 +26,10 @@ namespace Data {
     class GraphNode : public Node<T> {
     public:
         int id;
+        std::wstring name;
         SingleNode<GraphNode<T> *> *connections = nullptr;
 
-        explicit GraphNode(int id, T val) : id(id), Node<T>(val) {}
+        explicit GraphNode(int id, std::wstring name, T val) : id(id), name(name), Node<T>(val) {}
     };
 
     template<typename T>

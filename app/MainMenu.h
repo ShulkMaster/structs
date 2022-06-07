@@ -22,7 +22,9 @@ private:
     const int MaxConnectionToShow = 10;
     State state = Neutral;
     ushort editOptionIndex = 0;
-    std::wstring buff;
+    std::wstring buffId;
+    std::wstring buffName;
+    bool isId = true;
     std::wstring errors;
     char m_digits[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
@@ -144,7 +146,9 @@ private:
     void Restore() {
         errors.clear();
         state = Neutral;
-        buff.clear();
+        buffId.clear();
+        buffName.clear();
+        isId = true;
     }
 
     void HandleAdding(int action) {
@@ -152,20 +156,30 @@ private:
             case CTRL_KEY('e'):
                 Restore();
                 return;
+            case UpArrow:
+            case DownArrow:
+                isId = !isId;
+                return;
             case Backspace:
-                if (!buff.empty()) {
-                    buff.pop_back();
-                }
+                if (isId) {
+                    if (!buffId.empty()) buffId.pop_back();
+                } else if (!buffName.empty()) buffName.pop_back();
                 return;
             case ENTER: {
-                if (buff.empty()) {
+                if (buffId.empty()) {
                     errors.clear();
                     errors.append(L"Debe ingresar un valor para el ID");
                     errors.append(Jump);
                     return;
                 }
-                int id = std::stoi(buff);
-                bool wasInserted = graph->Insert(new GraphNode<Tree<Champion>>(id, Tree<Champion>()));
+                if (buffName.empty()) {
+                    errors.clear();
+                    errors.append(L"Debe ingresar un nombre de nodo");
+                    errors.append(Jump);
+                    return;
+                }
+                int id = std::stoi(buffId);
+                bool wasInserted = graph->Insert(new GraphNode<Tree<Champion>>(id, buffName,Tree<Champion>()));
                 if (!wasInserted) {
                     errors.clear();
                     errors.append(L"El nodo ya existe");
@@ -177,13 +191,19 @@ private:
                 return;
             }
             default:
-                if (buff.length() > 6) return;
-                for (char m_digit: m_digits) {
-                    if (action == m_digit) {
-                        buff.push_back(action);
-                        return;
+                if (isId) {
+                    if (buffId.length() > 6) return;
+
+                    for (char m_digit: m_digits) {
+                        if (action == m_digit) {
+                            buffId.push_back(action);
+                            return;
+                        }
                     }
+                    return;
                 }
+                if (buffName.length() > 20 && !iscntrl(action)) return;
+                buffName.push_back(action);
         }
     }
 
@@ -215,8 +235,14 @@ public:
     }
 
     void PrintAddingMenu() {
-        std::wcout << L"Ingrese el ID del nodo a crear #" << Jump;
-        std::wcout << L"ID: " << buff << Jump;
+        std::wcout << L"Creacion de Nodo" << Jump;
+        if(isId) {
+            std::wcout << L"=> ID: " << buffId << Jump;
+            std::wcout << L"   Nombre: " << buffName << Jump;
+        } else {
+            std::wcout << L"   ID: " << buffId << Jump;
+            std::wcout << L"=> Nombre: " << buffName << Jump;
+        }
         std::wcout << L"⏎ create node      Cancel Ctrl + E" << Jump;
         if (!errors.empty()) {
             std::wcout << errors << Jump;

@@ -146,8 +146,7 @@ public:
     }
 
     void Print() {
-        std::wcout << Name << L"/Node " << node->id << Jump;
-        std::wcout << L"Nivel" << tree->level << Jump;
+        std::wcout << Name << L"/Node " << node->id << L'-' << node->name << L"/Tree Nivel-" << tree->level << Jump;
         RenderNodes();
         if (state == Editing) {
             PrintEditMenu();
