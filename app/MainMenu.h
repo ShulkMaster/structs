@@ -183,6 +183,7 @@ private:
     }
 
     void ProcessInput(int action) {
+        if(action <= CTRL_KEY('z')) return;
         if (isId) {
             if (buffId.length() > 6) return;
 

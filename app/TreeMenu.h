@@ -19,7 +19,7 @@ private:
     const wchar_t *Name = nullptr;
     State state = Neutral;
     Data::GraphNode<Data::Tree<Champion>> *node = nullptr;
-    Data::Tree<Champion> *tree;
+    Data::Tree<Champion> *tree = nullptr;
     const int width = 100;
     const wchar_t *options[4] = {
             L"1) Create node 😎\t",
@@ -147,6 +147,21 @@ private:
 
     void ProcessInput(int action) {
         // order : name / age / className
+        if(action <= CTRL_KEY('z')) return;
+        if (action == Backspace || action == Delete) {
+            switch (editIndex) {
+                case 0:
+                    if (!nameBuff.empty()) nameBuff.pop_back();
+                    break;
+                case 1:
+                    if (!ageBuff.empty()) ageBuff.pop_back();
+                    break;
+                case 2:
+                    if (!classBuff.empty()) classBuff.pop_back();
+                    break;
+            }
+            return;
+        }
         switch (editIndex) {
             case 0:
                 if (nameBuff.length() > 50 && !iscntrl(action)) break;
@@ -160,6 +175,7 @@ private:
                         return;
                     }
                 }
+                break;
             case 2:
                 if (classBuff.length() > 60 && !iscntrl(action)) break;
                 classBuff.push_back(action);
@@ -222,6 +238,7 @@ public:
             case Editing:
                 HandleEditing(action);
                 break;
+            case Updating:
             case Submenu:
                 break;
         }

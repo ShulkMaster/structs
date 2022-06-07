@@ -49,6 +49,11 @@ public:
             perror("read");
             exit(1);
         }
+        if (iscntrl(byteRead)) {
+            std::wprintf(L"%d\r\n", byteRead);
+        } else {
+            wprintf(L"%d ('%c')\r\n", byteRead, byteRead);
+        }
         if (byteRead != Seq) {
             keyCode = 0 + byteRead;
             return keyCode;
