@@ -9,10 +9,11 @@ public:
     std::wstring name;
     int age;
     std::wstring className;
-    std::tm release;
 
-    std::wstring ToDate() {
-        return std::to_wstring(release.tm_mday).append(release.tm_mon, 1);
+    Champion(int age, std::wstring name, std::wstring className) {
+        this->className = className;
+        this->name = name;
+        this->age = age;
     }
 
     bool operator<(const Champion &champ) const {

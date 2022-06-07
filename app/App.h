@@ -72,12 +72,15 @@ public:
             auto trick = new GraphNode<Tree<Champion>>(i, L"Node", Tree<Champion>());
             auto tree = Data::Tree<Champion>();
             for (int j = 3; j < 6; ++j) {
-                auto champ = Champion();
-                auto champ2 = Champion();
-                champ.age = (8 - j) * 5;
-                champ2.age = (2 + j) * 5;
-                champ.name = std::wstring(L"Champion").append(std::to_wstring(j));
-                champ2.name = std::wstring(L"Champ").append(std::to_wstring(6 - j));
+                int age = (8 - j) * 5;
+                auto name = std::wstring(L"Champion").append(std::to_wstring(j));
+                auto className = std::wstring(L"Chatarrero");
+                auto champ = Champion(age, name, className);
+                name.clear();
+                age = (2 + j) * 5;
+                name.clear();
+                name.append(L"Champ").append(std::to_wstring(6 - j));
+                auto champ2 = Champion(age,name, className);
                 tree.Insert(new TreeNode<Champion>(champ));
                 tree.Insert(new TreeNode<Champion>(champ2));
             }

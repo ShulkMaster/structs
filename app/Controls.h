@@ -18,6 +18,8 @@ enum KeyControl {
     ESC,
 };
 
+const char digits[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
 /**
  * Contains a beautiful ASCII representation of a unicorn
  * Art by -Tua Xiong from https://www.asciiart.eu/mythology/unicorns
@@ -31,7 +33,7 @@ const wchar_t *UNICORN_BANNER = L"              ,,))))))));,\r\n"
                                 "            |   |   |   ,))((((_     _____------~~~-.        %,;(;(>';'~\r\n"
                                 "            o_);   ;    )))(((` ~---~  `::           \\      %%~~)(v;(`('~\r\n"
                                 "                  ;    ''''````         `:       `:::|\\,__,%%    );`'; ~\r\n"
-                                "                 |   _                )     /      `:|`----'     `-'\r\n"
+                                "                 |   _  Unicorn.exe   )     /      `:|`----'     `-'\r\n"
                                 "           ______/\\/~    |                 /        /\r\n"
                                 "         /~;;.____/;;'  /          ___--,-(   `;;;/\r\n"
                                 "        / //  _;______;'------~~~~~    /;;/\\    /\r\n"

@@ -13,6 +13,7 @@ private:
         Adding,
         Editing,
         Submenu,
+        Updating
     };
 
     const wchar_t *Name = nullptr;
@@ -27,6 +28,11 @@ private:
             L"4) End edit",
     };
     ushort editOptionIndex = 0;
+    ushort editIndex = 0;
+    std::wstring nameBuff;
+    std::wstring ageBuff;
+    std::wstring classBuff;
+    std::wstring errors;
 
     const ushort optionNumber = sizeof(options) / sizeof(wchar_t *);
 
@@ -64,6 +70,7 @@ private:
     void HandleAction() {
         switch (editOptionIndex) {
             case 0: {
+                state = Adding;
                 break;
             }
             case 1:
@@ -108,6 +115,60 @@ private:
         }
     }
 
+    void Restore() {
+        state = Neutral;
+        editIndex = 0;
+        nameBuff.clear();
+        ageBuff.clear();
+        classBuff.clear();
+    }
+
+    bool isValid() {
+        bool valid = true;
+        errors.clear();
+
+        if (ageBuff.empty()) {
+            errors.append(L"Debe ingresar una edad");
+            errors.append(Jump);
+            valid = false;
+        }
+        if (nameBuff.empty()) {
+            errors.append(L"Debe ingresar un nombre");
+            errors.append(Jump);
+            valid = false;
+        }
+        if (classBuff.empty()) {
+            errors.append(L"Debe ingresar una clase");
+            errors.append(Jump);
+            valid = false;
+        }
+        return valid;
+    }
+
+    void ProcessInput(int action) {
+        // order : name / age / className
+        switch (editIndex) {
+            case 0:
+                if (nameBuff.length() > 50 && !iscntrl(action)) break;
+                nameBuff.push_back(action);
+                break;
+            case 1:
+                if (ageBuff.length() > 6) break;
+                for (char m_digit: digits) {
+                    if (action == m_digit) {
+                        ageBuff.push_back(action);
+                        return;
+                    }
+                }
+            case 2:
+                if (classBuff.length() > 60 && !iscntrl(action)) break;
+                classBuff.push_back(action);
+                break;
+            default:
+                break;
+        }
+    }
+
 public:
     explicit TreeMenu(const wchar_t *name) {
         this->Name = name;
@@ -119,11 +180,44 @@ public:
         state = Neutral;
     }
 
+    void HandleAdding(int action) {
+        switch (action) {
+            case CTRL_KEY('e'):
+                Restore();
+                return;
+            case LeftArrow:
+            case RightArrow:
+                break;
+            case UpArrow:
+                editIndex = std::max(0, editIndex - 1);
+                break;
+            case DownArrow:
+                editIndex = std::min(2, editIndex + 1);
+                break;
+            case ENTER: {
+                if (!isValid()) return;
+                int age = std::stoi(ageBuff);
+                auto newNode = new Data::TreeNode<Champion>(Champion(age, nameBuff, classBuff));
+                bool wasInserted = tree->Insert(newNode);
+                if (!wasInserted) {
+                    errors.append(L"El nodo ya existe");
+                    errors.append(Jump);
+                    return;
+                }
+                Restore();
+                return;
+            }
+            default:
+                ProcessInput(action);
+        }
+    }
+
     bool HandleKey(int action) {
         switch (state) {
             case Neutral:
                 return HandleMainKey(action);
             case Adding:
+                HandleAdding(action);
                 break;
             case Editing:
                 HandleEditing(action);
@@ -145,8 +239,32 @@ public:
         std::wcout << Jump << std::endl;
     }
 
+    const wchar_t *GetPointer(ushort index) const {
+        return editIndex != index ? L"   " : L"=> ";
+    }
+
+    void PrintAddingMenu() {
+        std::wcout << L"Creacion de Nodo Arbol" << Jump;
+        std::wcout << GetPointer(0) << L"Name: " << nameBuff << Jump;
+        std::wcout << GetPointer(1) << L"Edad: " << ageBuff << Jump;
+        std::wcout << GetPointer(2) << L"Clase: " << classBuff << Jump;
+        if (state == Adding) {
+            std::wcout << L"⏎ create node      Cancel Ctrl + E" << Jump;
+        } else {
+            std::wcout << L"⏎ Actualizar nodo      Cancel Ctrl + E" << Jump;
+        }
+        if (!errors.empty()) {
+            std::wcout << errors << Jump;
+        }
+        std::wcout << std::endl;
+    }
+
     void Print() {
         std::wcout << Name << L"/Node " << node->id << L'-' << node->name << L"/Tree Nivel-" << tree->level << Jump;
+        if (state == Adding || state == Updating) {
+            PrintAddingMenu();
+            return;
+        }
         RenderNodes();
         if (state == Editing) {
             PrintEditMenu();

@@ -27,7 +27,6 @@ private:
     std::wstring buffName;
     bool isId = true;
     std::wstring errors;
-    char m_digits[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
     const wchar_t *options[4] = {
             L"1) Create node 😎\t",
@@ -60,10 +59,14 @@ private:
                 cursorX = 0;
                 break;
             }
+            case 'a':
+            case 'A':
             case LeftArrow: {
                 cursorX = std::max(0, cursorX - 1);
                 break;
             }
+            case 'd':
+            case 'D':
             case RightArrow: {
                 int xMax = graph->ConnectionsAt(cursorY);
                 cursorX = std::min(xMax - 1, cursorX + 1);
@@ -183,7 +186,7 @@ private:
         if (isId) {
             if (buffId.length() > 6) return;
 
-            for (char m_digit: m_digits) {
+            for (char m_digit: digits) {
                 if (action == m_digit) {
                     buffId.push_back(action);
                     return;
@@ -217,12 +220,10 @@ private:
                 int id = std::stoi(buffId);
                 bool wasInserted = graph->Insert(new GraphNode<Tree<Champion>>(id, buffName, Tree<Champion>()));
                 if (!wasInserted) {
-                    errors.clear();
                     errors.append(L"El nodo ya existe");
                     errors.append(Jump);
                     return;
                 }
-                state = Neutral;
                 Restore();
                 return;
             }
@@ -300,7 +301,11 @@ public:
             std::wcout << L"   ID: " << buffId << Jump;
             std::wcout << L"=> Nombre: " << buffName << Jump;
         }
-        std::wcout << L"⏎ create node      Cancel Ctrl + E" << Jump;
+        if (state == Adding) {
+            std::wcout << L"⏎ create node      Cancel Ctrl + E" << Jump;
+        } else {
+            std::wcout << L"⏎ Actualizar nodo      Cancel Ctrl + E" << Jump;
+        }
         if (!errors.empty()) {
             std::wcout << errors << Jump;
         }
