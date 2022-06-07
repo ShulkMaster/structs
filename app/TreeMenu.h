@@ -12,7 +12,6 @@ private:
         Neutral,
         Adding,
         Editing,
-        Submenu,
         Updating
     };
 
@@ -36,6 +35,17 @@ private:
 
     const ushort optionNumber = sizeof(options) / sizeof(wchar_t *);
 
+    void ChangeToUpdate() {
+        editIndex = 0;
+        if (tree->GetCurrent() != nullptr) {
+            auto value = tree->GetCurrent()->value;
+            nameBuff.append(value.name);
+            ageBuff.append(std::to_wstring(value.age));
+            classBuff.append(value.className);
+            state = Updating;
+        }
+    }
+
     bool HandleMainKey(int action) {
         switch (action) {
             case 'w':
@@ -55,6 +65,9 @@ private:
                 tree->NextRight();
                 break;
             }
+            case ENTER:
+                ChangeToUpdate();
+                break;
             case CTRL_KEY('e'): {
                 state = state == Neutral ? Editing : Neutral;
                 break;
@@ -74,6 +87,7 @@ private:
                 break;
             }
             case 1:
+                ChangeToUpdate();
                 break;
             case 2:
                 tree->Delete(tree->GetCurrent());
@@ -147,7 +161,7 @@ private:
 
     void ProcessInput(int action) {
         // order : name / age / className
-        if(action <= CTRL_KEY('z')) return;
+        if (action <= CTRL_KEY('z')) return;
         if (action == Backspace || action == Delete) {
             switch (editIndex) {
                 case 0:
@@ -213,6 +227,16 @@ public:
             case ENTER: {
                 if (!isValid()) return;
                 int age = std::stoi(ageBuff);
+                if(state == Updating) {
+                    auto val = &tree->GetCurrent()->value;
+                    val->age = age;
+                    val->name.clear();
+                    val->name.append(nameBuff);
+                    val->className.clear();
+                    val->className.append(classBuff);
+                    Restore();
+                    return;
+                }
                 auto newNode = new Data::TreeNode<Champion>(Champion(age, nameBuff, classBuff));
                 bool wasInserted = tree->Insert(newNode);
                 if (!wasInserted) {
@@ -232,14 +256,12 @@ public:
         switch (state) {
             case Neutral:
                 return HandleMainKey(action);
+            case Updating:
             case Adding:
                 HandleAdding(action);
                 break;
             case Editing:
                 HandleEditing(action);
-                break;
-            case Updating:
-            case Submenu:
                 break;
         }
         return true;
