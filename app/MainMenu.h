@@ -13,6 +13,7 @@ private:
         Adding,
         Editing,
         Submenu,
+        Updating,
     };
     int cursorX = 0;
     int cursorY = 0;
@@ -85,8 +86,18 @@ private:
                 state = Adding;
                 break;
             }
-            case 1:
+            case 1: {
+                graph->Reset();
+                graph->Next(cursorY);
+                isId = false;
+                auto edit = graph->GetCurrent();
+                if (edit != nullptr) {
+                    state = Updating;
+                    buffId.append(std::to_wstring(edit->id));
+                    buffName.append(edit->name);
+                }
                 break;
+            }
             case 2:
                 graph->Reset();
                 graph->Next(cursorY);
@@ -151,11 +162,47 @@ private:
         isId = true;
     }
 
+    bool isValid() {
+        bool valid = true;
+        errors.clear();
+
+        if (buffId.empty()) {
+            errors.append(L"Debe ingresar un valor para el ID");
+            errors.append(Jump);
+            valid = false;
+        }
+        if (buffName.empty()) {
+            errors.append(L"Debe ingresar un nombre de nodo");
+            errors.append(Jump);
+            valid = false;
+        }
+        return valid;
+    }
+
+    void ProcessInput(int action) {
+        if (isId) {
+            if (buffId.length() > 6) return;
+
+            for (char m_digit: m_digits) {
+                if (action == m_digit) {
+                    buffId.push_back(action);
+                    return;
+                }
+            }
+            return;
+        }
+        if (buffName.length() > 20 && !iscntrl(action)) return;
+        buffName.push_back(action);
+    }
+
     void HandleAdding(int action) {
         switch (action) {
             case CTRL_KEY('e'):
                 Restore();
                 return;
+            case LeftArrow:
+            case RightArrow:
+                break;
             case UpArrow:
             case DownArrow:
                 isId = !isId;
@@ -166,20 +213,9 @@ private:
                 } else if (!buffName.empty()) buffName.pop_back();
                 return;
             case ENTER: {
-                if (buffId.empty()) {
-                    errors.clear();
-                    errors.append(L"Debe ingresar un valor para el ID");
-                    errors.append(Jump);
-                    return;
-                }
-                if (buffName.empty()) {
-                    errors.clear();
-                    errors.append(L"Debe ingresar un nombre de nodo");
-                    errors.append(Jump);
-                    return;
-                }
+                if (!isValid()) return;
                 int id = std::stoi(buffId);
-                bool wasInserted = graph->Insert(new GraphNode<Tree<Champion>>(id, buffName,Tree<Champion>()));
+                bool wasInserted = graph->Insert(new GraphNode<Tree<Champion>>(id, buffName, Tree<Champion>()));
                 if (!wasInserted) {
                     errors.clear();
                     errors.append(L"El nodo ya existe");
@@ -191,19 +227,36 @@ private:
                 return;
             }
             default:
-                if (isId) {
-                    if (buffId.length() > 6) return;
+                ProcessInput(action);
+        }
+    }
 
-                    for (char m_digit: m_digits) {
-                        if (action == m_digit) {
-                            buffId.push_back(action);
-                            return;
-                        }
-                    }
-                    return;
-                }
-                if (buffName.length() > 20 && !iscntrl(action)) return;
-                buffName.push_back(action);
+    void HandleUpdate(int action) {
+        switch (action) {
+            case CTRL_KEY('e'):
+                Restore();
+                return;
+            case LeftArrow:
+            case RightArrow:
+            case UpArrow:
+            case DownArrow:
+                break;
+            case Backspace:
+                if (isId) {
+                    if (!buffId.empty()) buffId.pop_back();
+                } else if (!buffName.empty()) buffName.pop_back();
+                return;
+            case ENTER: {
+                if (!isValid()) return;
+                auto current = graph->GetCurrent();
+                current->name.clear();
+                current->name.append(buffName);
+                state = Neutral;
+                Restore();
+                return;
+            }
+            default:
+                ProcessInput(action);
         }
     }
 
@@ -226,9 +279,13 @@ public:
             case Editing:
                 HandleEditKey(action);
                 break;
-            case Submenu:
+            case Submenu: {
                 bool continues = submenu->HandleKey(action);
                 state = continues ? state : Neutral;
+                break;
+            }
+            case Updating:
+                HandleUpdate(action);
                 break;
         }
         return true;
@@ -236,7 +293,7 @@ public:
 
     void PrintAddingMenu() {
         std::wcout << L"Creacion de Nodo" << Jump;
-        if(isId) {
+        if (isId) {
             std::wcout << L"=> ID: " << buffId << Jump;
             std::wcout << L"   Nombre: " << buffName << Jump;
         } else {
@@ -255,16 +312,12 @@ public:
             submenu->Print();
             return;
         }
-        if (state == Adding) {
+
+        if (state == Adding || state == Updating) {
             PrintAddingMenu();
             return;
         }
-//        std::wprintf(L"\x1B[31mTexting\033[0m\t\t");
-//        std::wprintf(L"\x1B[32mTexting\033[0m\t\t");
-//        std::wprintf(L"\x1B[33mTexting\033[0m\t\t");
-//        std::wprintf(L"\x1B[34mTexting\033[0m\t\t");
-//        std::wprintf(L"\x1B[35mTexting\033[0m\n");
-//        std::wprintf(Jump);
+
         std::wcout << Name << Jump;
         graph->Reset();
         if (graph->Count() < 1) {
