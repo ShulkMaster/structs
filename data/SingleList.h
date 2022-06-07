@@ -14,6 +14,15 @@ namespace Data {
         int count = 0;
 
     public:
+
+        virtual ~SingleList() {
+            while (root != nullptr) {
+                auto temp = root->next;
+                delete root->value;
+                root = temp;
+            }
+        }
+
         bool Insert(T node) override {
             if (root == nullptr) {
                 root = new SingleNode<T>(node);
@@ -87,16 +96,6 @@ namespace Data {
 
         int Count() override {
             return count;
-        }
-
-        void Clear() {
-            while (root != nullptr) {
-                auto temp = root->next;
-                delete root->value;
-                delete root;
-                root = temp;
-            }
-            stack = root;
         }
 
     };

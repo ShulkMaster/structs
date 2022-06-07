@@ -10,13 +10,29 @@ namespace Data {
     class Graph : public IMutable<GraphNode<T> *>, public IEnumerable<GraphNode<T> *> {
     private:
         Data::SingleList<GraphNode<T> *> *list = nullptr;
-        Data::SingleList<GraphNode<T> *> *lCopy = nullptr;
+
+        bool Contains(int id) {
+            Reset();
+            for (int i = 0; i < Count(); ++i) {
+                auto current = list->GetCurrent();
+                if (current->id == id) {
+                    return true;
+                }
+                list->Next();
+            }
+            return false;
+        }
 
     public:
         static const int maxNodes = 25;
 
         Graph() {
             list = new Data::SingleList<GraphNode<T> *>();
+        }
+
+        virtual ~Graph() {
+            std::wcout << L"Deleting list" << Jump;
+            delete list;
         }
 
         int ConnectionsAt(GraphNode<T> *node) {
@@ -38,11 +54,11 @@ namespace Data {
         }
 
         bool Insert(GraphNode<T> *node) override {
-            if (list->Count() >= maxNodes) {
+            if (list->Count() >= maxNodes || Contains(node->id)) {
                 return false;
             }
 
-            // todo check if id exist
+            list->Reset();
             while (list->Next()) {
                 auto gNode = list->GetCurrent();
                 if (node->id % gNode->id == 0) {
@@ -58,7 +74,6 @@ namespace Data {
                     conns->next = new SingleNode<GraphNode<T> *>(node);
                 }
             }
-            list->Reset();
             return list->Insert(node);
         }
 

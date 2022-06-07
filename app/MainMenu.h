@@ -17,7 +17,7 @@ private:
     };
     int cursorX = 0;
     int cursorY = 0;
-    Graph<Tree<Champion>> *graph = nullptr;
+    Graph<Tree<Champion>*> *graph = nullptr;
     TreeMenu *submenu;
     const int MaxRows = 10;
     const int MaxConnectionToShow = 10;
@@ -219,9 +219,9 @@ private:
             case ENTER: {
                 if (!isValid()) return;
                 int id = std::stoi(buffId);
-                bool wasInserted = graph->Insert(new GraphNode<Tree<Champion>>(id, buffName, Tree<Champion>()));
+                bool wasInserted = graph->Insert(new GraphNode<Tree<Champion> *>(id, buffName, new Tree<Champion>()));
                 if (!wasInserted) {
-                    errors.append(L"El nodo ya existe");
+                    errors.append(L"El nodo ya existe o alcanzo el limite ").append(std::to_wstring(Graph<Tree<Champion>>::maxNodes));
                     errors.append(Jump);
                     return;
                 }
@@ -265,7 +265,7 @@ private:
 public:
     const wchar_t Name[11] = L"Grafo LOL";
 
-    explicit MainMenu(Graph<Tree<Champion>> *g) {
+    explicit MainMenu(Graph<Tree<Champion> *> *g) {
         this->graph = g;
         this->submenu = new TreeMenu(Name);
     }
@@ -354,7 +354,7 @@ public:
         }
     }
 
-    void RenderConnections(GraphNode<Tree<Champion>> *node, bool isSelected) {
+    void RenderConnections(GraphNode<Tree<Champion> *> *node, bool isSelected) {
         int total = graph->ConnectionsAt(node);
         int end = std::min(total, cursorX + MaxConnectionToShow);
         if (!isSelected) {

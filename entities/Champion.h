@@ -20,13 +20,24 @@ public:
         return name < champ.name;
     }
 
-    bool operator<(const Champion* champ) const {
+    bool operator<(const Champion *champ) const {
         return name < champ->name;
     }
 
     bool operator==(const Champion &champ) const {
         return name == champ.name;
     }
+
+    friend std::wostream& operator<<(std::wostream& os, const Champion &champion);
+
+    virtual ~Champion() {
+        std::wcout << L"Deleting " << name << Jump;
+    }
 };
+
+std::wostream &operator<<(std::wostream &os, const Champion &champion) {
+    os << champion.name;
+    return os;
+}
 
 #endif //REDEMPTION_CHAMPION_H

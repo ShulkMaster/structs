@@ -10,6 +10,7 @@ namespace Data {
     class Tree : public IMutable<TreeNode<T> *> {
     public:
         int level = 0;
+
     private:
         TreeNode<T> *root = nullptr;
         TreeNode<T> *stack = nullptr;
@@ -69,7 +70,20 @@ namespace Data {
             return Delete(node, tree->left) || Delete(node, tree->right);
         }
 
+        void DeleteTree(TreeNode<T> *node) {
+            if(node == nullptr) return;
+            std::wcout << L"\tDeleting tree node" << node->value << Jump;
+            DeleteTree(node->left);
+            DeleteTree(node->right);
+            delete node;
+        }
+
     public:
+
+        virtual ~Tree() {
+            std::wcout << L"\tDeleting " << L"Tree" << Jump;
+            DeleteTree(root);
+        }
 
         TreeNode<T> *GetRoot() {
             return root;

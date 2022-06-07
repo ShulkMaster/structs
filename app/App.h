@@ -72,10 +72,10 @@ public:
     }
 
     void Run() {
-        auto graph = new Graph<Tree<Champion>>();
+        auto graph = new Graph<Tree<Champion>*>();
         for (int i = 0; i < 20; ++i) {
-            auto trick = new GraphNode<Tree<Champion>>(i, L"Node", Tree<Champion>());
-            auto tree = Data::Tree<Champion>();
+            auto trick = new GraphNode<Tree<Champion> *>(i, L"Node", new Tree<Champion>());
+            auto tree = new Data::Tree<Champion>();
             for (int j = 3; j < 6; ++j) {
                 int age = (8 - j) * 5;
                 auto name = std::wstring(L"Champion").append(std::to_wstring(j));
@@ -86,11 +86,12 @@ public:
                 name.clear();
                 name.append(L"Champ").append(std::to_wstring(6 - j));
                 auto champ2 = Champion(age,name, className);
-                tree.Insert(new TreeNode<Champion>(champ));
-                tree.Insert(new TreeNode<Champion>(champ2));
+                tree->Insert(new TreeNode<Champion>(champ));
+                tree->Insert(new TreeNode<Champion>(champ2));
             }
             trick->value = tree;
             graph->Insert(trick);
+            std::wcout << i << L"loop" << Jump;
         }
         auto *m = new MainMenu(graph);
         bool continues = true;

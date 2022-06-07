@@ -17,7 +17,7 @@ private:
 
     const wchar_t *Name = nullptr;
     State state = Neutral;
-    Data::GraphNode<Data::Tree<Champion>> *node = nullptr;
+    Data::GraphNode<Data::Tree<Champion> *> *node = nullptr;
     Data::Tree<Champion> *tree = nullptr;
     const int width = 100;
     const wchar_t *options[4] = {
@@ -204,9 +204,9 @@ public:
         this->Name = name;
     }
 
-    void SetTree(Data::GraphNode<Data::Tree<Champion>> *pNode) {
+    void SetTree(Data::GraphNode<Data::Tree<Champion>*> *pNode) {
         this->node = pNode;
-        tree = &(node->value);
+        tree = node->value;
         state = Neutral;
     }
 
