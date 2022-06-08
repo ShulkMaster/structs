@@ -22,6 +22,27 @@ public:
         return str.substr(first, (last - first + 1));
     }
 
+    static bool FillChamp(Graph<Tree<Champion> *> *g, std::wstring &str) {
+        unsigned long start = 1;
+        auto split = str.find_first_of(',', start);
+        try {
+            std::wstring name = Trim(str.substr(start, split - 1));
+            start = split + 1;
+            split = str.find_first_of(',', start);
+            int age = std::stoi(str.substr(start, split));
+            start = split + 1;
+            std::wstring className = Trim(str.substr(start));
+            Champion champ = Champion(age, name, className);
+            return true;
+        } catch (std::out_of_range &ex) {
+            std::wcout << str << L"range" << Jump;
+        }
+        catch (std::invalid_argument &ex) {
+            std::wcout << str << L"args" << Jump;
+        }
+        return false;
+    }
+
     static void FillData(Graph<Tree<Champion> *> *g) {
         std::wifstream dataFile;
         dataFile.open("data.txt");
@@ -37,12 +58,18 @@ public:
         int lines = 0;
         int successNodes = 0;
         int errorNodes = 0;
+        int successChamps = 0;
+        int errorChamps = 0;
         while (dataFile) {
             std::getline(dataFile, dataLine);
             if (dataLine.empty()) continue;
             if (dataLine[0] == L'\t') {
                 lines++;
-                std::wcout << L"Champion" << dataLine << Jump;
+                if (FillChamp(g, dataLine)) {
+                    successChamps++;
+                } else {
+                    errorChamps++;
+                }
                 continue;
             }
             int start = 0;
@@ -66,7 +93,8 @@ public:
             lines++;
         }
         std::wcout << L"Lineas procesadas " << lines << Jump;
-        std::wcout << L"Nodos :" << successNodes << L" exitosos " << errorNodes << L" errores" << Jump;
+        std::wcout << L"Nodos exitosos: \x1B[32m" << successNodes << L"\033[0m | Fallidos \x1B[31m" << errorNodes << L"\033[0m" << Jump;
+        std::wcout << L"Campeones exitosos: " << successChamps << L" |  Fallidos \x1B[31m" << errorChamps << L"\033[0m" << Jump;
     }
 
     static int ReadControl(char byte) {
@@ -127,7 +155,7 @@ public:
         auto graph = new Graph<Tree<Champion> *>();
         PrintBanner();
         FillData(graph);
-        std::wcout << L"             PRESS ANY KEY TO CONTINUE\r\n";
+        std::wcout << L"PRESS ANY KEY TO CONTINUE\r\n";
         ReadPress();
         auto *m = new MainMenu(graph);
         bool continues = true;
