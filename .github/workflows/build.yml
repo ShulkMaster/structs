@@ -25,4 +25,5 @@ jobs:
           artifactErrorsFailBuild: true
           artifacts: ./build/unicorn,./build/data.txt
           draft: false
+          name: v0.1.0
           
