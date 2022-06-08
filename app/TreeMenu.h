@@ -103,6 +103,7 @@ private:
 
     void HandleEditing(int action) {
         switch (action) {
+            case '4':
             case CTRL_KEY('e'): {
                 // toggle state logic
                 state = state == Neutral ? Editing : Neutral;
@@ -120,6 +121,16 @@ private:
                 editOptionIndex = std::max(0, editOptionIndex - 1);
                 break;
             }
+            case '1':
+                state = Adding;
+                break;
+            case '2':
+                ChangeToUpdate();
+                break;
+            case '3':
+                tree->Delete(tree->GetCurrent());
+                state = Neutral;
+                break;
             case ENTER: {
                 HandleAction();
                 break;
@@ -204,7 +215,7 @@ public:
         this->Name = name;
     }
 
-    void SetTree(Data::GraphNode<Data::Tree<Champion>*> *pNode) {
+    void SetTree(Data::GraphNode<Data::Tree<Champion> *> *pNode) {
         this->node = pNode;
         tree = node->value;
         state = Neutral;
@@ -227,7 +238,7 @@ public:
             case ENTER: {
                 if (!isValid()) return;
                 int age = std::stoi(ageBuff);
-                if(state == Updating) {
+                if (state == Updating) {
                     auto val = &tree->GetCurrent()->value;
                     val->age = age;
                     val->name.clear();
