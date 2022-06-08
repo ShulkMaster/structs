@@ -3,6 +3,7 @@
 
 #include "Controls.h"
 #include "MainMenu.h"
+#include <fstream>
 
 
 class App {
@@ -10,6 +11,62 @@ public:
 
     static void PrintBanner() {
         std::wcout << UNICORN_BANNER << std::endl;
+    }
+
+    static std::wstring Trim(const std::wstring &str) {
+        size_t first = str.find_first_not_of(' ');
+        if (std::string::npos == first) {
+            return str;
+        }
+        size_t last = str.find_last_not_of(' ');
+        return str.substr(first, (last - first + 1));
+    }
+
+    static void FillData(Graph<Tree<Champion> *> *g) {
+        std::wifstream dataFile;
+        dataFile.open("data.txt");
+        if (!dataFile.is_open()) {
+            if (dataFile.bad()) {
+                std::wcout << L"Error al leer data.txt" << Jump;
+                return;
+            }
+            std::wcout << L"No se encontró ninguna datafile llamada data.txt" << Jump;
+            return;
+        }
+        std::wstring dataLine;
+        int lines = 0;
+        int successNodes = 0;
+        int errorNodes = 0;
+        while (dataFile) {
+            std::getline(dataFile, dataLine);
+            if (dataLine.empty()) continue;
+            if (dataLine[0] == L'\t') {
+                lines++;
+                std::wcout << L"Champion" << dataLine << Jump;
+                continue;
+            }
+            int start = 0;
+            auto split = dataLine.find(',', start);
+            try {
+                int id = std::stoi(dataLine.substr(start, split));
+                auto name = Trim(dataLine.substr(split + 1));
+                auto gNode = new GraphNode<Tree<Champion> *>(id, name, new Tree<Champion>());
+                bool wasInserted = g->Insert(gNode);
+                if (wasInserted) {
+                    successNodes++;
+                } else {
+                    errorNodes++;
+                }
+            } catch (std::invalid_argument &ex) {
+                std::wcout << lines << ' ' << dataLine << Jump;
+                errorNodes++;
+            } catch (std::out_of_range &ex) {
+                std::wcout << lines << ' ' << dataLine << Jump;
+            }
+            lines++;
+        }
+        std::wcout << L"Lineas procesadas " << lines << Jump;
+        std::wcout << L"Nodos :" << successNodes << L" exitosos " << errorNodes << L" errores" << Jump;
     }
 
     static int ReadControl(char byte) {
@@ -67,37 +124,21 @@ public:
     }
 
     static void Run() {
-        auto graph = new Graph<Tree<Champion>*>();
-        for (int i = 0; i < 20; ++i) {
-            auto trick = new GraphNode<Tree<Champion> *>(i, L"Node", new Tree<Champion>());
-            auto tree = new Data::Tree<Champion>();
-            for (int j = 3; j < 6; ++j) {
-                int age = (8 - j) * 5;
-                auto name = std::wstring(L"Champion").append(std::to_wstring(j));
-                auto className = std::wstring(L"Chatarrero");
-                auto champ = Champion(age, name, className);
-                name.clear();
-                age = (2 + j) * 5;
-                name.clear();
-                name.append(L"Champ").append(std::to_wstring(6 - j));
-                auto champ2 = Champion(age,name, className);
-                tree->Insert(new TreeNode<Champion>(champ));
-                tree->Insert(new TreeNode<Champion>(champ2));
-            }
-            trick->value = tree;
-            graph->Insert(trick);
-        }
+        auto graph = new Graph<Tree<Champion> *>();
+        PrintBanner();
+        FillData(graph);
+        std::wcout << L"             PRESS ANY KEY TO CONTINUE\r\n";
+        ReadPress();
         auto *m = new MainMenu(graph);
         bool continues = true;
-        PrintBanner();
         while (continues) {
-            int action = ReadPress();
             Refresh();
-            if(action == CTRL_KEY('q')){
+            m->Print();
+            int action = ReadPress();
+            if (action == CTRL_KEY('q')) {
                 break;
             }
             continues = m->HandleKey(action);
-            m->Print();
         }
         delete m;
         delete graph;

@@ -42,7 +42,6 @@ const wchar_t *UNICORN_BANNER = L"              ,,))))))));,\r\n"
                                 "       \\_| ||_                     //~;~~~~~~~~~\r\n"
                                 "           `\\_|                   (,~~\r\n"
                                 "                                   \\~\\\r\n"
-                                "                                    ~~\r\n"
-                                "             PRESS ANY KEY TO CONTINUE\r\n";
+                                "                                    ~~\r\n";
 
 #endif //REDEMPTION_CONTROLS_H

@@ -1,0 +1,16 @@
+1, Jonia
+	Irelia, 25, Melee
+2, Freljord
+	Juakin, 34, mage
+3, Demacia
+4, Noxus
+5, Las islas de la sombras
+6, Aguas turbias
+	Juakin, 34, mage
+	Juakin, 34, mage
+7, Piltover
+8, Zaun
+9, Shurima
+10, El vacio
+11, Targon
+12, Ciudad de bandle

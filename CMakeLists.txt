@@ -14,3 +14,11 @@ target_include_directories(unicorn PUBLIC
 target_sources(unicorn PUBLIC
         main.cpp
         )
+
+add_custom_target(data ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_SOURCE_DIR}/data.txt
+        $<TARGET_FILE_DIR:unicorn>/data.txt
+        )
+
+add_dependencies(data unicorn)
