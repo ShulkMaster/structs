@@ -17,7 +17,7 @@ private:
     };
     int cursorX = 0;
     int cursorY = 0;
-    Graph<Tree<Champion>*> *graph = nullptr;
+    Graph<Tree<Champion> *> *graph = nullptr;
     TreeMenu *submenu;
     const int MaxRows = 10;
     const int MaxConnectionToShow = 10;
@@ -83,6 +83,26 @@ private:
         }
     }
 
+    void GoToUpdate() {
+        graph->Reset();
+        graph->Next(cursorY);
+        isId = false;
+        auto edit = graph->GetCurrent();
+        if (edit != nullptr) {
+            state = Updating;
+            buffId.append(std::to_wstring(edit->id));
+            buffName.append(edit->name);
+        }
+    }
+
+    void DeleteItem() {
+        graph->Reset();
+        graph->Next(cursorY);
+        graph->Delete(graph->GetCurrent());
+        cursorY = std::max(0, cursorY - 1);
+        state = Neutral;
+    }
+
     void handleAction() {
         switch (editOptionIndex) {
             case 0: {
@@ -90,23 +110,11 @@ private:
                 break;
             }
             case 1: {
-                graph->Reset();
-                graph->Next(cursorY);
-                isId = false;
-                auto edit = graph->GetCurrent();
-                if (edit != nullptr) {
-                    state = Updating;
-                    buffId.append(std::to_wstring(edit->id));
-                    buffName.append(edit->name);
-                }
+                GoToUpdate();
                 break;
             }
             case 2:
-                graph->Reset();
-                graph->Next(cursorY);
-                graph->Delete(graph->GetCurrent());
-                cursorY = std::max(0, cursorY - 1);
-                state = Neutral;
+                DeleteItem();
                 break;
             case 3:
             default:
@@ -119,11 +127,22 @@ private:
 
     bool HandleEditKey(int action) {
         switch (action) {
+            case '4':
             case CTRL_KEY('e'): {
                 // toggle state logic
                 state = state == Neutral ? Editing : Neutral;
                 break;
             }
+            case '1':
+                state = Adding;
+                editOptionIndex = 0;
+                break;
+            case '2':
+                GoToUpdate();
+                break;
+            case '3':
+                DeleteItem();
+                break;
             case RightArrow:
             case 'd':
             case 'D': {
@@ -183,7 +202,7 @@ private:
     }
 
     void ProcessInput(int action) {
-        if(action <= CTRL_KEY('z')) return;
+        if (action <= CTRL_KEY('z')) return;
         if (isId) {
             if (buffId.length() > 6) return;
 
@@ -221,7 +240,8 @@ private:
                 int id = std::stoi(buffId);
                 bool wasInserted = graph->Insert(new GraphNode<Tree<Champion> *>(id, buffName, new Tree<Champion>()));
                 if (!wasInserted) {
-                    errors.append(L"El nodo ya existe o alcanzo el limite ").append(std::to_wstring(Graph<Tree<Champion>>::maxNodes));
+                    errors.append(L"El nodo ya existe o alcanzo el limite ").append(
+                            std::to_wstring(Graph<Tree<Champion>>::maxNodes));
                     errors.append(Jump);
                     return;
                 }
