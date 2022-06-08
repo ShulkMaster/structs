@@ -16,6 +16,12 @@ namespace Data {
         TreeNode<T> *stack = nullptr;
         int count = 0;
 
+        bool Contains(TreeNode<T> *node, TreeNode<T> *subtree) {
+            if(subtree == nullptr) return false;
+            if(subtree->value == node->value) return true;
+            return Contains(node, subtree->left) || Contains(node, subtree->right);
+        }
+
         bool Insert(TreeNode<T> *node, TreeNode<T> *tree) {
             if (node == nullptr) return false;
             node->up = tree;
@@ -92,6 +98,7 @@ namespace Data {
                 count++;
                 return true;
             }
+            if(Contains(node, root)) return false;
             return Insert(node, root);
         }
 
