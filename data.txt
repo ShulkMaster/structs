@@ -33,3 +33,38 @@
 	Miss Fortune, 25, Melee
 	Illaoi, 41, Melee
 	Gangplank, 42, Melee
+7, Piltover
+	Caitlyn, 25, Melee
+	Camille, 106, Melee
+	Ezreal, 28, Melee
+	Heimerdinger, 1456, Mage
+	Seraphine, 17, Mage
+8, Zaun
+	Blitzcrank, 6, Tank
+	Ekko, 18, Mag
+	Janna, 5998, Mage
+	Jinx, 18, Melee
+9, Shurima
+	Nasus, 3798, Tank
+	Renekton, 2051, Melee
+	Sivir, 32, Melee
+	Azir, 4512, Mage
+	Skarner, 667, Tank
+10, El vacio
+	Malzahar, 497, Mage
+	Kassadin, 2020, Mage
+	Kaisa, 16, Melee
+	RekSai, 1367, Melee
+	ChoGatch, 4567, Tank
+11, Targon
+	Diana, 72, Mage
+	Leona, 71, Tank
+	Pantheon, 110, Melee
+	Soraka, 356, Mage
+	Aurelion Sol, 10000, Mage
+12, Ciudad de bandle
+	Teemo, 1000, Melee
+	Tristana, 1000, melee
+	Lulu, 1000, Mage
+	Corki, 1000, Melee
+	Rumble, 1000, Mage
