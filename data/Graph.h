@@ -38,7 +38,7 @@ namespace Data {
         GraphNode<T> *FindById(int id) {
             Reset();
             for (int i = 0; i < Count(); ++i) {
-                if(GetCurrent()->id == id) return GetCurrent();
+                if (GetCurrent()->id == id) return GetCurrent();
                 Next();
             }
             return nullptr;
@@ -67,21 +67,30 @@ namespace Data {
                 return false;
             }
 
-            list->Reset();
-            while (list->Next()) {
+            Reset();
+            for (int i = 0; i < Count(); ++i) {
                 auto gNode = list->GetCurrent();
-                if (node->id % gNode->id == 0) {
-                    node->connections = new SingleNode<GraphNode<T> *>(gNode);
+                if (std::rand() % 2 == 0) {
+                    if (node->connections == nullptr) {
+                        node->connections = new SingleNode<GraphNode<T> *>(gNode);
+                    } else {
+                        auto temp = node->connections;
+                        while (temp->next != nullptr) {
+                            temp = temp->next;
+                        }
+                        temp->next = new SingleNode<GraphNode<T> *>(gNode);
+                    }
                     auto conns = gNode->connections;
                     if (conns == nullptr) {
                         gNode->connections = new SingleNode<GraphNode<T> *>(node);
-                        continue;
+                    } else {
+                        while (conns->next != nullptr) {
+                            conns = conns->next;
+                        }
+                        conns->next = new SingleNode<GraphNode<T> *>(node);
                     }
-                    while (conns->next != nullptr) {
-                        conns = conns->next;
-                    }
-                    conns->next = new SingleNode<GraphNode<T> *>(node);
                 }
+                list->Next();
             }
             return list->Insert(node);
         }

@@ -61,29 +61,18 @@ namespace Data {
             return Delete(node, tree->left) || Delete(node, tree->right);
         }
 
-        void DeleteTree(TreeNode<T> *node, int printed) {
+        void DeleteTree(TreeNode<T> *node) {
             if (node == nullptr) return;
-            if (printed > 4) {
-                printed = 0;
-                std::wcout << Jump;
-            } else {
-                printed++;
-            }
-            if (printed == 0) {
-                std::wcout << L"\t\t";
-            }
-            std::wcout << node->value << L", ";
-            DeleteTree(node->left, printed);
-            DeleteTree(node->right, printed);
+            DeleteTree(node->left);
+            DeleteTree(node->right);
             delete node;
         }
 
     public:
 
         virtual ~Tree() {
-            std::wcout << L"\tDeleting " << L"Tree" << Jump << L"\t\t";
-            DeleteTree(root, 0);
-            std::wcout << Jump;
+            std::wcout << L"\tDeleting " << L"Tree: " << Count() << " Nodes" << Jump;
+            DeleteTree(root);
         }
 
         TreeNode<T> *GetRoot() {

@@ -169,9 +169,9 @@ public:
         auto *m = new MainMenu(graph);
         bool continues = true;
         while (continues) {
-            Refresh();
             m->Print();
             int action = ReadPress();
+            Refresh();
             if (action == CTRL_KEY('q')) {
                 break;
             }
