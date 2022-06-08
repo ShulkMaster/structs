@@ -4,7 +4,9 @@ Este pequeño ejecutable permite cargar datos de League of Legends almacenados e
 local llamado `data.txt` que no es necesario que este presente, sin embargo, esto permite tener data
 pre cargada al iniciar el programa.
 
-Mas sobre el formato del datafile aquí.
+Mas sobre el formato del datafile [aquí](./datafile.md).
+
+__Nota__ : Ya se incluye un datafile en las releases de Github
 
 # Interfaz
 
