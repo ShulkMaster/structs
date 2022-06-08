@@ -9,6 +9,8 @@
 class App {
 public:
 
+    static const int NullId = -753211;
+
     static void PrintBanner() {
         std::wcout << UNICORN_BANNER << std::endl;
     }
@@ -22,7 +24,7 @@ public:
         return str.substr(first, (last - first + 1));
     }
 
-    static bool FillChamp(Graph<Tree<Champion> *> *g, std::wstring &str) {
+    static bool FillChamp(Tree<Champion> *tree, std::wstring &str) {
         unsigned long start = 1;
         auto split = str.find_first_of(',', start);
         try {
@@ -33,7 +35,10 @@ public:
             start = split + 1;
             std::wstring className = Trim(str.substr(start));
             Champion champ = Champion(age, name, className);
-            return true;
+            bool inserted = tree->Insert(new TreeNode<Champion>(champ));
+            if(!inserted)
+                std::wcout << champ << Jump;
+            return inserted;
         } catch (std::out_of_range &ex) {
             std::wcout << str << L"range" << Jump;
         }
@@ -60,12 +65,15 @@ public:
         int errorNodes = 0;
         int successChamps = 0;
         int errorChamps = 0;
+        int lastId = NullId;
         while (dataFile) {
             std::getline(dataFile, dataLine);
             if (dataLine.empty()) continue;
             if (dataLine[0] == L'\t') {
                 lines++;
-                if (FillChamp(g, dataLine)) {
+                if(lastId == NullId) continue;
+                auto node = g->FindById(lastId);
+                if (FillChamp(node->value, dataLine)) {
                     successChamps++;
                 } else {
                     errorChamps++;
@@ -81,6 +89,7 @@ public:
                 bool wasInserted = g->Insert(gNode);
                 if (wasInserted) {
                     successNodes++;
+                    lastId = id;
                 } else {
                     errorNodes++;
                 }

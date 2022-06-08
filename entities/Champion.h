@@ -32,7 +32,7 @@ public:
 };
 
 std::wostream &operator<<(std::wostream &os, const Champion &champion) {
-    os << champion.name;
+    os << champion.name << ' ' << champion.age << ' ' << champion.className;
     return os;
 }
 

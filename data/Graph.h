@@ -35,6 +35,15 @@ namespace Data {
             delete list;
         }
 
+        GraphNode<T> *FindById(int id) {
+            Reset();
+            for (int i = 0; i < Count(); ++i) {
+                if(GetCurrent()->id == id) return GetCurrent();
+                Next();
+            }
+            return nullptr;
+        }
+
         int ConnectionsAt(GraphNode<T> *node) {
             auto copy = node->connections;
             int count = 0;

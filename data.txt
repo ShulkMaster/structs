@@ -1,16 +1,35 @@
 1, Jonia
 	Irelia, 25, Melee
+	Zed, 34, Melee
+	Ahri, 181, Mage
+	Shen, 29, Melee
+	Yasuo, 20, Melee
 2, Freljord
-	Juakin, 34, mage
+	Ashe, 21, shooter
+	Lissandra, 10000, Mage
+	Nunu y Willup,8998, Mage
+	Volibear, 1000, Melee
 3, Demacia
+	Garen, 26, Melee
+	Sona, 21, Mage
+	Fiora, 26, Melee
+	Xin Zhao, 30, Melee
+	Galio, 648, Tank
 4, Noxus
+	Darius, 37, Melee
+	Vladimir, 317, Mage
+	Katarina, 25, Melee
+	Leblanc, 1448, Mage
+	Riven, 27, Melee
 5, Las islas de la sombras
+	Yorick, 1048, Tank
+	Kalista, 1048, Melee
+	Gwen,7, Melee
+	Viego, 1045, Melee
+	Hecarim, 1093, Melee
 6, Aguas turbias
-	Juakin, 34, mage
-	Juakin, 34, mage
-7, Piltover
-8, Zaun
-9, Shurima
-10, El vacio
-11, Targon
-12, Ciudad de bandle
+	Graves, 32, Melee
+	Twisted Fated, 30, Mage
+	Miss Fortune, 25, Melee
+	Illaoi, 41, Melee
+	Gangplank, 42, Melee
