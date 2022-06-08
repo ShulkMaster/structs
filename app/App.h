@@ -4,15 +4,46 @@
 #include "Controls.h"
 #include "MainMenu.h"
 #include <fstream>
+#include <cstring>
 
 
 class App {
+private:
+    const wchar_t *End = L"\x1B[33m";
+    const wchar_t *Red = L"\x1B[31m";
+    const wchar_t *Green = L"\x1B[32m";
+    const wchar_t *Purple = L"\x1B[33m";
+    const wchar_t *Saber = L"\x1B[34m";
+    const wchar_t *Saber2 = L"\x1B[35m";
+    const wchar_t *Colors[5] = {Red, Green, Purple, Saber, Saber2};
+
 public:
 
     static const int NullId = -753211;
 
-    static void PrintBanner() {
-        std::wcout << UNICORN_BANNER << std::endl;
+    void PrintBanner() {
+        const std::wstring banner = std::wstring(UNICORN_BANNER);
+        const int remaining = banner.length() % 100;
+        const int times = banner.length() / 100;
+        ushort index = 0;
+        auto color = Colors[index];
+        while (ReadPress() != ENTER) {
+            Refresh();
+            for (int i = 0; i < times; i++) {
+                index++;
+                if (index >= 5) {
+                    index = 0;
+                }
+                color = Colors[index];
+                std::wcout << color << banner.substr(i * 100, 100) << End;
+            }
+            std::wcout << banner.substr(100 * times, remaining) << End << Jump;
+            if (index % 10) {
+                std::wcout << L"\tPRESS ENTER TO CONTINUE\r\n";
+            }
+        }
+        Refresh();
+        std::wcout << Jump;
     }
 
     static std::wstring Trim(const std::wstring &str) {
@@ -36,7 +67,7 @@ public:
             std::wstring className = Trim(str.substr(start));
             Champion champ = Champion(age, name, className);
             bool inserted = tree->Insert(new TreeNode<Champion>(champ));
-            if(!inserted)
+            if (!inserted)
                 std::wcout << champ << Jump;
             return inserted;
         } catch (std::out_of_range &ex) {
@@ -71,7 +102,7 @@ public:
             if (dataLine.empty()) continue;
             if (dataLine[0] == L'\t') {
                 lines++;
-                if(lastId == NullId) continue;
+                if (lastId == NullId) continue;
                 auto node = g->FindById(lastId);
                 if (FillChamp(node->value, dataLine)) {
                     successChamps++;
@@ -102,8 +133,10 @@ public:
             lines++;
         }
         std::wcout << L"Lineas procesadas " << lines << Jump;
-        std::wcout << L"Nodos exitosos: \x1B[32m" << successNodes << L"\033[0m | Fallidos \x1B[31m" << errorNodes << L"\033[0m" << Jump;
-        std::wcout << L"Campeones exitosos: " << successChamps << L" |  Fallidos \x1B[31m" << errorChamps << L"\033[0m" << Jump;
+        std::wcout << L"Nodos exitosos: \x1B[32m" << successNodes << L"\033[0m | Fallidos \x1B[31m" << errorNodes
+                   << L"\033[0m" << Jump;
+        std::wcout << L"Campeones exitosos: " << successChamps << L" |  Fallidos \x1B[31m" << errorChamps << L"\033[0m"
+                   << Jump;
     }
 
     static int ReadControl(char byte) {
@@ -160,12 +193,20 @@ public:
         return ESC;
     }
 
-    static void Run() {
+    void Run(termios &raw) {
         auto graph = new Graph<Tree<Champion> *>();
+        // time out read bytes
+        int vMin = raw.c_cc[VMIN];
+        int vTime = raw.c_cc[VTIME];
+        raw.c_cc[VMIN] = 0;
+        raw.c_cc[VTIME] = 1;
+        tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
         PrintBanner();
+        raw.c_cc[VMIN] = vMin;
+        raw.c_cc[VTIME] = vTime;
+        tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
         FillData(graph);
-        std::wcout << L"PRESS ANY KEY TO CONTINUE\r\n";
-        ReadPress();
+
         auto *m = new MainMenu(graph);
         bool continues = true;
         while (continues) {

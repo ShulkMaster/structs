@@ -42,6 +42,6 @@ int main() {
 
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
     App app;
-    app.Run();
+    app.Run(raw);
     return 0;
 }
